@@ -2,7 +2,9 @@
 trigger:
 - main
 pool:
- vmImage: ubuntu-latest
+ name: Default
+ demands:
+ - Tag -equals agent1
 steps:
 - bash: echo hello world
 - task: Npm@1
