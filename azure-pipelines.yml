@@ -1,3 +1,32 @@
-pool: MyAgentPool
+
+trigger:
+- main
+pool:
+ vmImage: ubuntu-latest
 steps:
 - bash: echo hello world
+- task: Npm@1
+  inputs:
+    command: 'install'
+- task: gulp@0
+  inputs:
+    gulpFile: 'gulpfile.js'
+    targets: 
+    gulpjs: 'node_modules/gulp/bin/gulp.js'
+    enableCodeCoverage: false
+- task: CmdLine@2
+  inputs:
+    script: 'echo `date` > Tailspin.SpaceGame.Web/wwwroot/buildinfo.txt'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+- task: DotNetCoreCLI@2
+  displayName: 'Build the project'
+  inputs:
+    command: 'build'
+    arguments: '--no-restore --configuration Release'
+    projects: '**/*.csproj'
